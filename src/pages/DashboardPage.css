@@ -96,16 +96,21 @@
   border: 1px solid #E0E0E0; 
   background-color: #fff;
   padding: 0 60px 0 20px;
-  font-size: 25px;
+  font-size: 30px;
   box-sizing: border-box;
   color: #333;
+  padding: 0 20px; /* 돋보기를 삭제, 오른쪽 패딩 줄임 */
+  font-size: 18px; /* 폰트 크기를 약간 조절 */
+  font-weight: 500;
 }
 
 .search-bar input::placeholder {
-  color: #999;
+  color: #888;
+  opacity: 1;
+  font-size: 16px
 }
 
-
+/* 의미없는 돋보기 기능 안녕
 .search-bar .search-button {
   background: none;
   border: none;
@@ -115,7 +120,7 @@
   padding: 0;
   color: #FAF5EB;
 }
-
+ 
 .search-button-wrapper {
   position: absolute;
   right: 10px;
@@ -123,12 +128,13 @@
   transform: translateY(-50%);
   width: 55px;
   height: 55px;
-  background-color: #46463C; /* Sidebar theme color */
+  background-color: #46463C; /* Sidebar theme color 
   border-radius: 13px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+  */
 
 /* Country Tabs */
 .country-tabs {
