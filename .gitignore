@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 /.env
+
+# 이미지 에셋 폴더 무시
+/src/assets

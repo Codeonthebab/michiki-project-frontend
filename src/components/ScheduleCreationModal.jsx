@@ -3,25 +3,24 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './ScheduleCreationModal.css';
 import { LanguageContext } from '../context/LanguageContext';
+import { getDaysArr } from '../utils/useDaysArray';
+import { useNavigate } from 'react-router-dom';
 
 function ScheduleCreationModal({ isOpen, onClose, destination, imageMap }) {
   // 모달의 현재 단계를 기억할 state ('country', 'destination', 'form')
-  const [modalStep, setModalStep] = useState('country');
-  // 사용자가 선택한 나라를 기억할 state
-  const [selectedCountry, setSelectedCountry] = useState(null);
-  // 사용자가 최종 선택한 여행지 정보를 기억할 state
+  const [modalStep, setModalStep] = useState('country'); // 사용자가 선택한 나라를 기억할 state
+  const [selectedCountry, setSelectedCountry] = useState(null);// 사용자가 최종 선택한 여행지 정보를 기억할 state
   const [finalDestination, setFinalDestination] = useState(null);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { texts } = useContext(LanguageContext); // 전체 텍스트 데이터 불러오기
+  const navigate = useNavigate();
 
   // 모달이 열릴 때마다 내부 상태를 초기화하는 로직
   useEffect(() => {
-    if (isOpen) {
-      // 여행지 카드를 클릭해서 열린 경우
-      if (destination) {
+    if (isOpen) { 
+      if (destination) { // 여행지 카드를 클릭해서 열린 경우
         setFinalDestination(destination);
         setModalStep('form');
       } else { // + 버튼을 눌러서 열린 경우
@@ -29,6 +28,7 @@ function ScheduleCreationModal({ isOpen, onClose, destination, imageMap }) {
         setSelectedCountry(null);
         setFinalDestination(null);
       }
+      setCurrentImageIndex(0); // 이미지 인덱스 초기화
     }
   }, [isOpen, destination]);
 
@@ -42,7 +42,18 @@ function ScheduleCreationModal({ isOpen, onClose, destination, imageMap }) {
     }
   }, [isOpen, modalStep, finalDestination]);
 
+  // 모달창 생성된 후, 뒷 배경 안 움직이게 락!
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
+
 
   // --- 이벤트 핸들러 ---
   const handleCountrySelect = (country) => {
@@ -61,7 +72,11 @@ function ScheduleCreationModal({ isOpen, onClose, destination, imageMap }) {
   };
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault(); // 새로 고침 동장 안되게 하는거
+    
+    const tripDays = getDaysArr(startDate, endDate);
+    console.log("선택된 여행 기간 : ", tripDays);
+    
     const scheduleData = {
       destination: finalDestination.name,
       startDate: startDate,
@@ -71,6 +86,7 @@ function ScheduleCreationModal({ isOpen, onClose, destination, imageMap }) {
     console.log("Creating schedule with:", scheduleData);
     // 여기에 백엔드로 데이터를 전송하는 로직을 추가할 수 있습니다.
     onClose();
+    navigate('/schedule/new')
   };
 
   // --- 각 단계별로 보여줄 오른쪽 콘텐츠를 렌더링하는 함수 ---
