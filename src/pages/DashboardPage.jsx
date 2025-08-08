@@ -1,13 +1,12 @@
-import { useState, useContext, useEffect } from "react";
+import { useEffect } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { useState, useContext } from "react";
 import "./DashboardPage.css";
 import YearSelector from "../components/YearSelector";
 import ScheduleCreationModal from "../components/ScheduleCreationModal";
 import { LanguageContext } from "../context/LanguageContext";
 import { texts as allTexts } from "../data/translations"; // texts import
-import { Link } from "react-router-dom";
-import { fetchTrips } from "../api/_mock";
 
-// 일본 도시 이미지 임포트, 나중에 이미지 호스팅 방식으로 대체
 import osakaImage1 from "../assets/Osaka1.webp";
 import osakaImage2 from "../assets/Osaka2.webp";
 import osakaImage3 from "../assets/Osaka3.webp";
@@ -202,20 +201,18 @@ const imageMap = {
   ],
 };
 
-function DashboardPage() {
+function DashboardPage() { 
+  const navigate = useNavigate();
+  const { isLoggedIn } = useOutletContext();
+  useEffect(() => { if (!isLoggedIn) navigate("/", { replace: true }); }, [isLoggedIn, navigate]);
   const { language } = useContext(LanguageContext);
   const texts = allTexts[language];
   const [activeTab, setActiveTab] = useState("japan");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDestination, setSelectedDestination] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(""); // 검색 기능
-  const [trips, setTrips] = useState({ myTrips: [], pastTrips: [] });
 
-  useEffect(() => {
-    fetchTrips().then((data) => {
-      setTrips(data);
-    });
-  }, []);
+   // 🔥 검색어 상태
+  const [searchInput, setSearchInput] = useState("");
 
   const handleCardClick = (destinationData) => {
     const destinationWithImages = {
@@ -238,8 +235,11 @@ function DashboardPage() {
     setSelectedDestination(null);
   };
 
-  const filteredDestinations = texts.destinations[activeTab].filter((dest) =>
-    dest.name.toLowerCase().includes(searchTerm.toLowerCase())
+   // 🔥 실시간 필터링 (한글/영어 모두 포함, 대소문자 구분 없음)
+  const filteredDestinations = texts.destinations[activeTab].filter(
+    (dest) =>
+      dest.name.includes(searchInput) ||
+      dest.engName.toLowerCase().includes(searchInput.toLowerCase())
   );
 
   return (
@@ -247,13 +247,11 @@ function DashboardPage() {
       <aside className="sidebar">
         <YearSelector />
         <div className="trip-list">
-          {trips.myTrips.map((trip) => (
-            <Link to={`/schedule/${trip.id}`} key={trip.name}>
-              <div className="trip-item">
-                <span className="trip-name">{trip.name}</span>
-                <span className="trip-date">{trip.date}</span>
-              </div>
-            </Link>
+          {texts.myTrips.map((trip) => (
+            <div key={trip.name} className="trip-item">
+              <span className="trip-name">{trip.name}</span>
+              <span className="trip-date">{trip.date}</span>
+            </div>
           ))}
           {texts.pastTrips.map((trip) => (
             <div key={trip.name} className="trip-item past">
@@ -271,43 +269,75 @@ function DashboardPage() {
       </aside>
 
       <main className="main-content">
+        {/* 🔥 검색 입력창 */}
         <div className="search-bar">
           <input
             type="text"
             placeholder={texts.searchPlaceholder}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            style={{
+              flex: 1,
+              fontSize: 17,
+              fontFamily: "inherit",
+              border: "1px solid #e8e3cf",
+              borderRadius: 12,
+              padding: "9px 15px",
+              background: "#fffdf5",
+              color: "#333",
+            }}
           />
-          {/*<div className="search-button-wrapper">
-            <button className="search-button">🔍</button>
-          </div>*/}
+          <div className="search-button-wrapper">
+            <button className="search-button" tabIndex={-1}>🔍</button>
+          </div>
         </div>
+
+        {/* 탭 */}
         <div className="country-tabs">
           <button
             className={`tab-item ${activeTab === "japan" ? "active" : ""}`}
-            onClick={() => setActiveTab("japan")}
+            onClick={() => { setActiveTab("japan"); setSearchInput(""); }}
           >
             {texts.tabJapan}
           </button>
           <button
             className={`tab-item ${activeTab === "korea" ? "active" : ""}`}
-            onClick={() => setActiveTab("korea")}
+            onClick={() => { setActiveTab("korea"); setSearchInput(""); }}
           >
             {texts.tabKorea}
           </button>
         </div>
+
+        {/* 🔥 검색어 반영된 카드 목록 */}
         <div className="destination-grid">
-          {filteredDestinations.map((dest) => (
-            <div
-              key={dest.name}
-              className="destination-card"
-              onClick={() => handleCardClick(dest)}
-            >
-              <img src={imageMap[dest.engName][0]} alt={dest.name} />
-              <div className="card-title">{dest.name}</div>
-              <div className="card-subtitle">{dest.engName}</div>
+          {filteredDestinations.length === 0 ? (
+            <div style={{ color: "#bbb", textAlign: "center", padding: 36 }}>
+              검색 결과가 없습니다.
             </div>
-          ))}
+          ) : (
+            filteredDestinations.map((dest) => (
+              <div
+                key={dest.name}
+                className="destination-card"
+                onClick={() => handleCardClick(dest)}
+                style={{
+                  cursor: "pointer",
+                  border: "1.5px solid #ece3d6",
+                  borderRadius: 14,
+                  overflow: "hidden",
+                  background: "#fff",
+                }}
+              >
+                <img
+                  src={imageMap[dest.engName][0]}
+                  alt={dest.name}
+                  style={{ width: "100%", height: 170, objectFit: "cover" }}
+                />
+                <div className="card-title" style={{ fontWeight: 700, fontSize: 19 }}>{dest.name}</div>
+                <div className="card-subtitle" style={{ color: "#888", fontSize: 15 }}>{dest.engName}</div>
+              </div>
+            ))
+          )}
         </div>
       </main>
 
