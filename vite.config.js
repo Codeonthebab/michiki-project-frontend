@@ -1,8 +1,14 @@
+// vite.config.js
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: "/michiki-project-frontend/", 
+  base: '/',
+  server: {
+    host: true,
+    port: 5173,
+    strictPort: true,
+    allowedHosts: 'all',
+  },
 })
