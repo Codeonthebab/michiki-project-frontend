@@ -1,0 +1,74 @@
+/* src/components/realtime.css and used by PlanDetailPage */
+.detail-wrap { position: relative; min-height: 100vh; background: #fffdf5; }
+.detail-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid #eee; }
+.detail-title { margin:0; font-size:20px; }
+.detail-actions { display:flex; gap:8px; align-items:center; }
+.btn { background:#f0d8a8; border:none; border-radius:12px; padding:8px 12px; cursor:pointer; }
+.btn.outline { background:#fffdf5; border:1px solid #f0d8a8; }
+.btn.xs { padding:4px 8px; border-radius:8px; }
+.detail-body { display:grid; grid-template-columns: 1fr 320px; gap:16px; padding:16px; }
+.left-pane { background:white; border-radius:16px; padding:12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.right-pane { position:sticky; top:12px; align-self:start; }
+
+.empty { color:#888; padding:12px; }
+.place-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+.place-item { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:10px; border-radius:12px; background:#faf6eb; }
+.place-name { font-weight:600; }
+.place-desc { color:#555; margin-top:4px; }
+.place-meta { color:#999; font-size:12px; margin-top:4px; }
+.place-actions { display:flex; gap:6px; }
+
+.cursor-layer { position:fixed; inset:0; pointer-events:none; z-index:9999; }
+.cursor-dot { position:absolute; width:12px; height:12px; border-radius:50%; background:black; opacity:0.6; transform:translate(-50%, -50%); }
+.cursor-name { position:absolute; top:-20px; left:10px; font-size:12px; background:#333; color:#fff; padding:2px 6px; border-radius:8px; white-space:nowrap; }
+
+.chat-panel { background:white; border-radius:16px; padding:12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display:flex; flex-direction:column; height: 70vh; }
+.chat-title { font-weight:700; margin-bottom:8px; }
+.chat-list { flex:1; overflow:auto; display:flex; flex-direction:column; gap:8px; padding-right:4px; }
+.chat-item { background:#faf6eb; border-radius:12px; padding:8px; }
+.chat-time { margin-left:8px; color:#888; font-weight:400; font-size:12px; }
+.chat-text { margin-top:4px; white-space:pre-wrap; }
+.chat-input-row { display:flex; gap:8px; margin-top:8px; }
+.chat-input-row textarea { flex:1; min-height:60px; resize:vertical; border-radius:12px; padding:8px; border:1px solid #ddd; background:#fffdf5; }
+.chat-send-btn { background:#f0d8a8; border:none; padding:10px 12px; border-radius:12px; cursor:pointer; }
+
+@media (max-width: 980px) {
+  .detail-body { grid-template-columns: 1fr; }
+  .right-pane { position:relative; top:auto; }
+}
+/* additions for status dot, toasts, recommendations, DnD */
+
+.status-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:8px; vertical-align:middle; }
+.status-dot.on { background:#22c55e; box-shadow:0 0 0 2px rgba(34,197,94,.25); }
+.status-dot.off { background:#ef4444; box-shadow:0 0 0 2px rgba(239,68,68,.25); }
+
+.toast-host { position:fixed; top:16px; right:16px; display:flex; flex-direction:column; gap:8px; z-index:10000; }
+.toast { padding:10px 12px; border-radius:12px; background:#333; color:#fff; box-shadow:0 4px 16px rgba(0,0,0,.2); }
+.toast-info { background:#2563eb; }
+.toast-success { background:#16a34a; }
+.toast-error { background:#dc2626; }
+
+.reco-panel { background:white; border-radius:16px; padding:12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom:16px; }
+.reco-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.reco-title { font-weight:700; }
+.reco-controls { display:flex; gap:8px; align-items:center; }
+.reco-list { display:flex; flex-direction:column; gap:8px; max-height: 30vh; overflow:auto; }
+.reco-item { display:flex; justify-content:space-between; gap:12px; padding:10px; border-radius:12px; background:#faf6eb; }
+.reco-name { font-weight:600; }
+.reco-desc { color:#555; margin-top:4px; }
+.reco-meta { color:#999; font-size:12px; margin-top:4px; }
+
+.date-group { margin-bottom:16px; }
+.date-title { font-weight:700; margin:8px 0; }
+
+.place-item.dnd { cursor:grab; }
+.place-item.dnd:active { cursor:grabbing; }
+.place-item.dnd.drag-over { outline:2px dashed #f0d8a8; }
+/* src/components/realtime.css (append for map styles) */
+.map-page { height: calc(100vh - 0px); background:#fffdf5; display:flex; flex-direction:column; }
+.map-toolbar { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #eee; }
+.map-title { font-weight:700; }
+.map-controls { display:flex; gap:8px; align-items:center; }
+.map-canvas { flex:1; min-height: 400px; }
+.map-hint { position:absolute; left:12px; bottom:12px; background:rgba(255,253,245,.9); border:1px solid #f0d8a8; padding:6px 8px; border-radius:8px; }
+

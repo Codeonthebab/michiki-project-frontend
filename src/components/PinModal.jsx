@@ -1,73 +1,96 @@
-import React from "react";
+// src/components/PinModal.jsx
+import { useEffect, useState } from "react";
 
-function PinModal({ pin, open, onClose, onCommentChange }) {
+export default function PinModal({ pin, open, onClose, onCommentChange }) {
+  const [memo, setMemo] = useState("");
+
+  useEffect(() => {
+    if (!open || !pin) return;
+    setMemo(pin.comment ?? pin.address ?? "");
+  }, [open, pin]);
+
   if (!open || !pin) return null;
+
   return (
     <div
       style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        background: "rgba(0,0,0,0.2)",
+        position: "absolute",
+        inset: 0,
+        background: "rgba(0,0,0,0.35)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 1000,
+        zIndex: 9999,
       }}
+      onClick={onClose}
     >
       <div
+        onClick={(e) => e.stopPropagation()}
         style={{
-          minWidth: 400,
-          minHeight: 320,
+          width: 420,
+          maxWidth: "90vw",
           background: "#fff",
-          borderRadius: 24,
-          boxShadow: "0 4px 24px #0005",
-          padding: 32,
-          display: "flex",
-          flexDirection: "column",
-          gap: 16,
-          position: "relative",
+          borderRadius: 12,
+          padding: 16,
+          boxShadow: "0 8px 30px rgba(0,0,0,0.2)",
         }}
       >
-        <button
-          onClick={onClose}
-          style={{
-            position: "absolute",
-            top: 16,
-            right: 16,
-            border: "none",
-            background: "transparent",
-            fontSize: 24,
-            cursor: "pointer",
-          }}
-        >
-          ×
-        </button>
-        <div style={{ fontWeight: 700, fontSize: 20, marginBottom: 10 }}>
-          {pin.name}
+        <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>
+          {pin.name || "장소"}
         </div>
-        <img
-          src={pin.photo || "https://via.placeholder.com/200x120?text=No+Image"}
-          alt=""
-          style={{ width: 200, borderRadius: 12, marginBottom: 12 }}
-        />
+        <div style={{ color: "#666", fontSize: 13, marginBottom: 12 }}>
+          {pin.googlePlaceId ? `GooglePlaceId: ${pin.googlePlaceId}` : ""}
+        </div>
+
+        <label style={{ fontWeight: 600, fontSize: 14, display: "block", marginBottom: 6 }}>
+          메모 (서버 description에 저장)
+        </label>
         <textarea
-          value={pin.comment}
-          onChange={e => onCommentChange(e.target.value)}
-          placeholder="여기에 메모나 일정을 입력하세요!"
+          value={memo}
+          onChange={(e) => setMemo(e.target.value)}
+          rows={6}
           style={{
             width: "100%",
-            minHeight: 80,
-            border: "1px solid #ccc",
             borderRadius: 8,
+            border: "1px solid #ddd",
             padding: 10,
+            boxSizing: "border-box",
+            fontSize: 14,
           }}
+          placeholder="예) 점심 메뉴 메모, 예약번호 등"
         />
+
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 12 }}>
+          <button
+            type="button"
+            onClick={onClose}
+            style={{
+              background: "#eee",
+              border: "none",
+              borderRadius: 8,
+              padding: "8px 12px",
+              cursor: "pointer",
+            }}
+          >
+            닫기
+          </button>
+          <button
+            type="button"
+            onClick={() => onCommentChange(memo)}
+            style={{
+              background: "#222",
+              color: "#fff",
+              border: "none",
+              borderRadius: 8,
+              padding: "8px 12px",
+              cursor: "pointer",
+              fontWeight: 700,
+            }}
+          >
+            저장
+          </button>
+        </div>
       </div>
     </div>
   );
 }
-
-export default PinModal;

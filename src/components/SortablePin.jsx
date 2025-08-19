@@ -19,7 +19,7 @@ function SortablePin({
       style={{
         display: "flex",
         alignItems: "center",
-        background: isDragging ? "#f0d8a8" : "#fff",
+        background: isDragging ? "#f0d8a8" : "#FAF5EB",
         color: "#333",
         marginBottom: 10,
         borderRadius: 14,
@@ -58,12 +58,15 @@ function SortablePin({
         }}
         style={{
           position: "absolute",
-          top: 8,
-          right: 8,
+          top: 2,
+          right: 12,
+          width: 10,
+          height: 10,
+          padding: 0,
           background: "none",
           border: "none",
           color: "#222",
-          fontSize: 22,
+          fontSize: 19,
           cursor: "pointer",
           fontWeight: 700,
           lineHeight: 1,
@@ -90,20 +93,6 @@ function SortablePin({
         }}
       >
         {index + 1}
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          left: 4,
-          top: "50%",
-          transform: "translateY(-50%)",
-          color: "#aaa",
-          fontSize: 20,
-          cursor: "grab",
-          userSelect: "none",
-        }}
-      >
-        ≡
       </div>
     </div>
   );

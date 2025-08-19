@@ -1,11 +1,14 @@
+// src/hooks/useDaysArray.js
 export function getDaysArr(startDate, endDate) {
   if (!startDate || !endDate) return [];
-  const days = [];
-  const cur = new Date(startDate);
-  cur.setHours(0, 0, 0, 0);
-  while (cur <= endDate) {
-    days.push(new Date(cur));
-    cur.setDate(cur.getDate() + 1);
+  const s = new Date(startDate);
+  const e = new Date(endDate);
+  s.setHours(0, 0, 0, 0);
+  e.setHours(0, 0, 0, 0);
+
+  const out = [];
+  for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+    out.push(new Date(d));
   }
-  return days;
+  return out;
 }
