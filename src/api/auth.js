@@ -1,13 +1,32 @@
 // src/api/auth.js
-// 프록시 환경에서는 BASE_URL 필요 없음
+import http, { raw } from "./http";
 
-// 4. 토큰 재발급
-export async function refreshAccessToken(refreshToken) {
-  const res = await fetch('/auth/refresh-token', {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refreshToken }),
-  });
-  if (!res.ok) throw new Error("토큰 재발급 실패");
-  return await res.json(); // { accessToken }
+export async function loginWithGoogle(code) {
+  // 서버가 { code }를 받음 (Swagger)
+  const { data } = await raw.post("/member/google/login", { code });
+  const accessToken  = data?.accessToken ?? data?.token ?? data?.access ?? null;
+  const refreshToken = data?.refreshToken ?? data?.refresh ?? null;
+  if (accessToken)  localStorage.setItem("accessToken", accessToken);
+  if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
+  if (data?.user)    localStorage.setItem("user", JSON.stringify(data.user));
+  return data;
+}
+
+export async function logout() {
+  try { await http.post("/member/logout"); } catch {}
+  try {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+  } catch {}
+}
+
+export async function withdraw() {
+  try { await http.post("/member/withdraw"); } finally {
+    try {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
+    } catch {}
+  }
 }
